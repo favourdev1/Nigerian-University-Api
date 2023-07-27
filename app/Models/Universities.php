@@ -13,6 +13,7 @@ class Universities extends Model
         'state',
         'city',
         'abbrevation',
-        'website'
+        'website',
+        'university_type'
     ];
 }

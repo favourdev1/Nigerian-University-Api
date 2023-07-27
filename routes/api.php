@@ -19,5 +19,30 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get("/university", [UniversityController::class, 'index']);
 
-Route::get("/" , [UniversityController::class,'index']);
+
+// get university detail based on its name or abbrevation 
+Route::get('/university/details/{name}', [UniversityController::class, 'getUniversityByName']);
+
+
+
+// get all the universities in a particular city
+Route::get('/university/city/{city}', [UniversityController::class, 'getUniversitiesInCity']);
+
+// get all the universities in a particular state
+Route::get('/university/state/{state}', [UniversityController::class, 'getUniversitiesInState']);
+
+
+
+
+
+// get all the private universities
+Route::get('/university/private/', [UniversityController::class, 'getAllPrivateUniversities']);
+
+// get all the private universities in a particular state
+Route::get('/university/private/{state}', [UniversityController::class, 'getPrivateUniversitiesInState']);
+
+
+
+

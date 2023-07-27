@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->string('abbreviation')->unique();
             $table->string('website');
+            $table->string('university_type');
 
             $table->timestamps();
         });

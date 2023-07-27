@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Universities;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Ramsey\Collection\Collection;
 
 class UniversityController extends Controller
 {
@@ -12,41 +14,162 @@ class UniversityController extends Controller
      */
     public function index()
     {
-        $university = Universities::pluck('name');
+        $universities = Universities::all()->take(20)->toArray();
 
-        return response()->json(["universities"=>$university]);
+
+        $this->removeSpecificData($universities);
+
+        return response()->json(["success" => true, "data" => ["universities" => $universities]]);
 
     }
+
 
     /**
-     * Store a newly created resource in storage.
+     * `Removes specific information from the end result `
+     * @param mixed $universities
+     * @param array $fieldsToRemove
+     * @return mixed
      */
-    public function store(Request $request)
+    private function removeSpecificData(&$universities, ...$fieldsToRemove)
     {
-        //
+        if (empty($universities)) {
+            return;
+        }
+
+        if (empty($fieldsToRemove)) {
+            $fieldsToRemove = ['id', 'created_at', 'updated_at'];
+        }
+        foreach ($universities as &$university) {
+            foreach ($fieldsToRemove as $field) {
+                unset($university[$field]);
+            }
+
+
+        }
+        return $universities;
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(universities $universities)
+
+    public function getUniversityByName($name)
     {
-        //
+        $name = trim(strtolower($name));
+        $validator = Validator::make(['name' => $name], [
+            'name' => 'min:1|regex:/^[a-z ]+$/'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "success" => false,
+                "error" => [
+                    "code" => 403,
+                    "message" => $validator->errors()->first('name')
+                ]
+            ]);
+        }
+
+        $universities = Universities
+            ::where("name", 'like', '%' . $name . '%')
+            ->orwhere("abbreviation", 'like', '%' . $name . '%')
+            ->get();
+
+
+        $this->removeSpecificData($universities);
+
+
+        return response()->json(["success" => true, "data" => ["universities" => $universities]]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, universities $universities)
+    public function getUniversitiesInCity($city)
     {
-        //
+        $validator = Validator::make(['city' => $city], [
+            'city' => 'min:1|regex:/^[a-z ]+$/'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "success" => false,
+                "error" => [
+                    "code" => 403,
+                    "message" => $validator->errors()->first('city')
+                ]
+            ]);
+        }
+
+        $universities = Universities::where("city", 'like', '%' . $city . '%')->get();
+
+
+
+        $this->removeSpecificData($universities);
+
+        return response()->json(["success" => true, "data" => ["universities" => $universities]]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(universities $universities)
+
+
+    public function getUniversitiesInState($state)
     {
-        //
+        $validator = Validator::make(['state' => $state], [
+            'state' => 'min:1|regex:/^[a-z ]+$/'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "success" => false,
+                "error" => [
+                    "code" => 403,
+                    "message" => $validator->errors()->first('state')
+                ]
+            ]);
+        }
+
+
+        $universities = Universities::where("state", 'like', '%' . $state . '%')->get();
+
+
+        $this->removeSpecificData($universities);
+        return response()->json(["success" => true, "data" => ["universities" => $universities]]);
     }
+
+
+
+
+    public function getAllPrivateUniversities()
+    {
+
+
+        $universities = Universities::where("university_type", "private")->get()->take(20);
+
+
+        $this->removeSpecificData($universities);
+        return response()->json(["success" => true, "data" => ["universities" => $universities]]);
+    }
+
+
+    public function getPrivateUniversitiesInState($state)
+    {
+        $state = trim(strtolower($state));
+        $validator = Validator::make(['state' => $state], [
+            'state' => 'min:1|regex:/^[a-z ]+$/'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "success" => false,
+                "error" => [
+                    "code" => 403,
+                    "message" => $validator->errors()->first('state')
+                ]
+            ]);
+        }
+
+
+        $universities = Universities
+            ::where("university_type", 'like', '%' . "private" . '%')
+            ->where("state", 'like', '%' . $state . '%')
+            ->get()->take(20);
+
+
+        $this->removeSpecificData($universities);
+        return response()->json(["success" => true, "data" => ["universities" => $universities]]);
+    }
+
 }
