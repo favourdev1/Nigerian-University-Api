@@ -8,12 +8,12 @@ use Illuminate\Support\Facades\DB;
 
 class UniversitySeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
-    {
-        $universities = json_decode(' [
+  /**
+   * Run the database seeds.
+   */
+  public function run(): void
+  {
+    $universities = json_decode(' [
             {
                 "name": "Abia State University, Uturu",
                 "state": "Abia",
@@ -704,6 +704,13 @@ class UniversitySeeder extends Seeder
                   "university_type": "Private"
                 },
                 {
+                   "name": "Michael Okpara University of Agriculture, Umudike",
+                   "state": "Abia",
+                    "city": "Umudike", 
+                    "abbreviation": "MOUAU", 
+                    "website": "https://mouau.edu.ng/",
+                     "type": "Federal" },
+                {
                   "name": "Modibbo Adama University of Technology, Yola",
                   "state": "Adamawa",
                   "city": "Yola",
@@ -1157,8 +1164,8 @@ class UniversitySeeder extends Seeder
                       
         ]', true);
 
-        DB::table('universities')->insert($universities);
-    }
+    DB::table('universities')->insert($universities);
+  }
 
 
 

@@ -20,7 +20,7 @@ The API follows a structured response format in JSON. Both success and error res
   - Status Code: 200 OK
   - Format: JSON
 
-```json
+```
 {
   "success": true,
   "data": {
@@ -45,7 +45,7 @@ The API follows a structured response format in JSON. Both success and error res
   - Status Code: 403 OK
   - Format: JSON
 
-``` 
+```
 {
   "success": false,
   "error": {

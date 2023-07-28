@@ -10,7 +10,9 @@ use Ramsey\Collection\Collection;
 class UniversityController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of universities.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -25,12 +27,13 @@ class UniversityController extends Controller
 
 
     /**
-     * `Removes specific information from the end result `
+     * `Removes specific information from the university data`
+     *
      * @param mixed $universities
      * @param array $fieldsToRemove
      * @return mixed
      */
-    private function removeSpecificData(&$universities, ...$fieldsToRemove)
+    public function removeSpecificData(&$universities, ...$fieldsToRemove)
     {
         if (empty($universities)) {
             return;
@@ -50,6 +53,13 @@ class UniversityController extends Controller
     }
 
 
+
+    /**
+     * Get university details by name or abbreviation.
+     *
+     * @param string $name
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getUniversityByName($name)
     {
         $name = trim(strtolower($name));
@@ -78,6 +88,14 @@ class UniversityController extends Controller
         return response()->json(["success" => true, "data" => ["universities" => $universities]]);
     }
 
+
+
+    /**
+     * Get universities in a city 
+     *
+     * @param string $city
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getUniversitiesInCity($city)
     {
         $validator = Validator::make(['city' => $city], [
@@ -94,17 +112,22 @@ class UniversityController extends Controller
             ]);
         }
 
-        $universities = Universities::where("city", 'like', '%' . $city . '%')->get();
-
-
-
+        $universities = Universities
+            ::where("city", 'like', '%' . $city . '%')
+            ->get()
+            ->take(20);
         $this->removeSpecificData($universities);
-
         return response()->json(["success" => true, "data" => ["universities" => $universities]]);
     }
 
 
 
+    /**
+     * Get universities in a state 
+     *
+     * @param string $state
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getUniversitiesInState($state)
     {
         $validator = Validator::make(['state' => $state], [
@@ -121,29 +144,39 @@ class UniversityController extends Controller
             ]);
         }
 
+        $universities = Universities
+            ::where("state", 'like', '%' . $state . '%')
+            ->pluck("name")
+            ->take(20);
 
-        $universities = Universities::where("state", 'like', '%' . $state . '%')->get();
 
-
-        $this->removeSpecificData($universities);
+        // $this->removeSpecificData($universities);
         return response()->json(["success" => true, "data" => ["universities" => $universities]]);
     }
 
 
 
+    /**
+     * Display a listing of all private universities.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
 
     public function getAllPrivateUniversities()
     {
+        $universities = Universities
+            ::where("university_type", "private")
+            ->pluck("name")
+            ->take(20);
 
-
-        $universities = Universities::where("university_type", "private")->get()->take(20);
-
-
-        $this->removeSpecificData($universities);
         return response()->json(["success" => true, "data" => ["universities" => $universities]]);
     }
 
-
+    /**
+     * Display a list of all private universities in a state
+     * @param string $state
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getPrivateUniversitiesInState($state)
     {
         $state = trim(strtolower($state));
@@ -171,5 +204,96 @@ class UniversityController extends Controller
         $this->removeSpecificData($universities);
         return response()->json(["success" => true, "data" => ["universities" => $universities]]);
     }
+
+    /**
+     * Display a listing of universities.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function getAllFederalUniversities()
+    {
+        $universities = Universities
+            ::where("university_type", "federal")
+            ->pluck("name")->take(20);
+
+        return response()->json(["success" => true, "data" => ["universities" => $universities]]);
+
+    }
+
+
+    /**
+     * Display a listing of  federal universities in a state .
+     *
+     * @param string $state
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getFederalUniversitiesInState($state)
+    {
+        $state = trim(strtolower($state));
+        $validator = Validator::make(['state' => $state], [
+            'state' => 'min:1|regex:/^[a-z ]+$/'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                "error" => [
+                    "code" => 403,
+                    "message" => $validator->errors()->first('state')
+                ]
+            ]);
+        }
+        $universities = Universities
+            ::where("university_type", 'like', '%' . "federal" . '%')
+            ->where("state", 'like', '%' . $state . '%')
+            ->get()->take(20);
+
+
+        $this->removeSpecificData($universities);
+        return response()->json(["success" => true, "data" => ["universities" => $universities]]);
+    }
+
+
+    public function getAllStateUniversities()
+    {
+        $universities = Universities::where("university_type", "state")->pluck('name')->take(20);
+        return response()->json(["success" => true, "data" => ["universities" => $universities]]);
+
+    }
+
+
+      /**
+     * Display a listing of  state  universities in a state .
+     *
+     * @param string $state
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getStateUniversitiesInState($state)
+    {
+        $state = trim(strtolower($state));
+        $validator = Validator::make(['state' => $state], [
+            'state' => 'min:1|regex:/^[a-z ]+$/'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                "error" => [
+                    "code" => 403,
+                    "message" => $validator->errors()->first('state')
+                ]
+            ]);
+        }
+        $universities = Universities
+            ::where("university_type", 'like', '%' . "state" . '%')
+            ->where("state", 'like', '%' . $state . '%')
+            ->pluck('name')
+            ->take(20);
+
+
+        // $this->removeSpecificData($universities);
+        return response()->json(["success" => true, "data" => ["universities" => $universities]]);
+    }
+
+
 
 }

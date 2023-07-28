@@ -27,6 +27,11 @@ Route::get('/university/details/{name}', [UniversityController::class, 'getUnive
 
 
 
+
+
+
+// ----------------------------- -----------------------------//
+
 // get all the universities in a particular city
 Route::get('/university/city/{city}', [UniversityController::class, 'getUniversitiesInCity']);
 
@@ -37,6 +42,7 @@ Route::get('/university/state/{state}', [UniversityController::class, 'getUniver
 
 
 
+// ----------------------------- -----------------------------//
 // get all the private universities
 Route::get('/university/private/', [UniversityController::class, 'getAllPrivateUniversities']);
 
@@ -45,4 +51,17 @@ Route::get('/university/private/{state}', [UniversityController::class, 'getPriv
 
 
 
+// ----------------------------- -----------------------------//
+// get all the [federal]  universities
+Route::get('/university/federal/', [UniversityController::class, 'getAllFederalUniversities']);
 
+// get all the [federal] universities in a particular state
+Route::get('/university/federal/{state}', [UniversityController::class, 'getFederalUniversitiesInState']);
+
+
+// ----------------------------- -----------------------------//
+// get all the [state]  universities
+Route::get('/university/state/', [UniversityController::class, 'getAllStateUniversities']);
+
+// get all the [state] universities in a particular state
+Route::get('/university/state/{state}', [UniversityController::class, 'getStateUniversitiesInState']);
