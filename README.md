@@ -56,3 +56,33 @@ The API follows a structured response format in JSON. Both success and error res
   }
 }
 ```
+
+- ### Get All Universities
+    - **URL** : **`/university`**
+    - Method: GET
+    - Description: Retrieves a list of all Nigerian universities (limited to 20 universities).
+
+- ### Get University Details by Name or Abbreviation
+    - **URL**: **`/university/details/{name}`**
+    - Method: GET
+    - Description: Retrieves university details based on its name or abbreviation.
+
+- ### Get Universities in a Particular City
+URL: /university/city/{city}
+Method: GET
+Description: Retrieves a list of universities located in a particular city.
+Get Universities in a Particular State
+URL: /university/state/{state}
+Method: GET
+Description: Retrieves a list of universities located in a particular state.
+Get All Private Universities
+URL: /university/private/
+Method: GET
+Description: Retrieves a list of all private Nigerian universities (limited to 20 universities).
+Get Private Universities in a Particular State
+URL: /university/private/{state}
+Method: GET
+Description: Retrieves a list of private universities located in a particular state.
+Note
+The API is for educational and informational purposes only.
+The data provided is based on the available records at the time of retrieval and may be subject to change.
