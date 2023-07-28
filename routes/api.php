@@ -23,7 +23,10 @@ Route::get("/university", [UniversityController::class, 'index']);
 
 
 // get university detail based on its name or abbrevation 
-Route::get('/university/details/{name}', [UniversityController::class, 'getUniversityByName']);
+Route::get('/university/details/{name}', [UniversityController::class, 'getUniversityDetailsByName']);
+
+// get university detail based on its name or abbrevation 
+Route::get('/university/details/state/{name}', [UniversityController::class, 'getStateUniversityDetailsInState']);
 
 
 

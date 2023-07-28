@@ -60,8 +60,12 @@ class UniversityController extends Controller
      * @param string $name
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getUniversityByName($name)
+    public function getUniversityDetailsByName($name)
     {
+
+        if($name == "state"){
+            return $this->getStateUniversityDetailsInState("state");
+        }
         $name = trim(strtolower($name));
         $validator = Validator::make(['name' => $name], [
             'name' => 'min:1|regex:/^[a-z ]+$/'
@@ -78,8 +82,8 @@ class UniversityController extends Controller
 
         $universities = Universities
             ::where("name", 'like', '%' . $name . '%')
-            ->orwhere("abbreviation", 'like', '%' . $name . '%')
-            ->get();
+            ->orwhere("abbreviation", 'like', '%' . $name )
+            ->get()->take(20);
 
 
         $this->removeSpecificData($universities);
@@ -87,6 +91,49 @@ class UniversityController extends Controller
 
         return response()->json(["success" => true, "data" => ["universities" => $universities]]);
     }
+
+
+
+
+
+      /**
+     * Display a listing of  state  universities in a state .
+     *
+     * @param string $state
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getStateUniversityDetailsInState($state)
+    {
+        $state = trim(strtolower($state));
+        $validator = Validator::make(['state' => $state], [
+            'state' => 'min:1|regex:/^[a-z ]+$/'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                "error" => [
+                    "code" => 403,
+                    "message" => $validator->errors()->first('state')
+                ]
+            ]);
+        }
+        $universities = Universities
+            ::where("university_type", 'like', '%' . "state" )
+            ->orwhere("state", 'like', '%' . $state . '%')
+            ->orwhere("abbreviation", $state)
+          
+            ->get()
+            ->take(20);
+
+
+        $this->removeSpecificData($universities);
+        return response()->json(["success" => true, "data" => ["universities" => $universities]]);
+    }
+
+
+
+
+
 
 
 
